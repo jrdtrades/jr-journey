@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jr Journey Test #1</title>
+<meta name="robots" content="noindex,nofollow">
+<style>
+  :root{--canvas:#0d0f14;--sidebar:#181a1f;--sidebar-2:#14161a;--line:#2a2e36;--line-soft:#22262d;--ink:#e6e8ed;--muted:#8f96a2;--faint:#5f6671;--accent:#4c82ff;--accent-faint:rgba(76,130,255,.14);--paper:#15181e;--success:#87c8ad;--danger:#e48181}
+  *{box-sizing:border-box} body{margin:0;background:var(--canvas);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.45;overflow:hidden}
+  button,input,textarea{font:inherit} button{color:inherit;background:none;border:0;cursor:pointer} button:focus-visible,[contenteditable]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .app{display:grid;grid-template-columns:286px minmax(0,1fr);height:100vh;border:1px solid #383b42;border-radius:18px;overflow:hidden;background:var(--canvas)}
+  .sidebar{background:linear-gradient(180deg,var(--sidebar),var(--sidebar-2));border-right:1px solid var(--line);padding:22px 14px 12px;display:flex;flex-direction:column;min-width:0}
+  .brand{padding:0 14px 16px;border-bottom:1px solid var(--line-soft)}.eyebrow{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}.brand h1{font-size:20px;line-height:1.2;margin:5px 0 3px;font-weight:620;letter-spacing:-.03em}.brand p{margin:0;color:var(--muted);font-size:12px}
+  .nav{padding:14px 4px 10px}.nav-item{width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:9px 10px;border-radius:7px;color:#b7bdc7;font-size:15px}.nav-item:hover,.nav-item.active{background:var(--accent-faint);color:#e8efff}.nav-icon{font-size:16px;color:#89919d;width:18px;text-align:center}.nav-item.active .nav-icon{color:var(--accent)}
+  .section-title{display:flex;align-items:center;justify-content:space-between;padding:16px 10px 8px;color:var(--accent);font-size:10px;letter-spacing:.24em;font-weight:700;text-transform:uppercase}.section-title span:first-child:before{content:"";display:inline-block;width:9px;height:9px;margin-right:8px;background:linear-gradient(135deg,#69a1ff 0 50%,#375fb3 50%);vertical-align:-1px}.tree{padding:0 2px}.tree-row{width:100%;display:flex;align-items:center;gap:7px;text-align:left;padding:8px;border-radius:6px;color:#b9c0ca;font-size:13px}.tree-row:hover{background:#20242b}.tree-row.selected{background:var(--accent-faint);color:#ecf2ff}.caret{font-size:12px;color:var(--faint);width:12px}.tree .child{margin-left:14px}.tree .grandchild{margin-left:29px}.tree .leaf{margin-left:44px}.badge{margin-left:auto;color:var(--faint);font-size:11px}.side-footer{margin-top:auto;display:flex;gap:12px;padding:12px 8px 0;border-top:1px solid var(--line-soft);color:var(--faint);font-size:13px}
+  .main{display:flex;flex-direction:column;min-width:0;background:#0e1015}.topbar{height:62px;border-bottom:1px solid var(--line-soft);display:flex;align-items:center;justify-content:space-between;padding:0 28px}.crumbs{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:13px}.crumbs strong{color:var(--ink);font-weight:560}.toolbar{display:flex;gap:8px}.tool{border:1px solid var(--line);background:#15181e;border-radius:6px;padding:7px 10px;color:#aeb5c0;font-size:12px}.tool:hover{border-color:#53617a;color:white}
+  .content{flex:1;min-height:0;display:grid;grid-template-columns:minmax(460px,1fr) 300px;overflow:hidden}.journal{overflow:auto;padding:42px clamp(34px,6vw,90px) 100px}.checklist{border-left:1px solid var(--line);background:#111319;padding:30px 22px;overflow:auto}
+  .date-line{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--accent);font-size:11px;letter-spacing:.13em;text-transform:uppercase}.journal h2{font-family:Georgia,"Times New Roman",serif;font-size:clamp(36px,4vw,58px);font-weight:400;letter-spacing:-.055em;margin:7px 0 8px;color:#dfe3ea}.journal .subtitle{color:var(--muted);margin:0 0 33px}.trade-summary{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:35px}.metric{padding:14px 0}.metric+.metric{border-left:1px solid var(--line);padding-left:20px}.metric label{display:block;color:var(--faint);font-size:10px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px}.metric strong{font-size:15px;font-weight:550}.profit{color:var(--success)}
+  .field{margin:0 0 27px}.field-label{color:var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:.18em;font-weight:700;margin-bottom:8px}.editable{min-height:30px;color:#d2d6de;font-size:15px;outline:none;white-space:pre-wrap}.editable.empty:before{content:attr(data-placeholder);color:#69707c}.thesis{font-family:Georgia,"Times New Roman",serif;font-size:21px;line-height:1.58;color:#d9dde4;min-height:100px}.divider{height:1px;background:var(--line);margin:32px 0}.trade-table{width:100%;border-collapse:collapse;font-size:13px}.trade-table th{color:var(--faint);font-weight:600;text-align:left;text-transform:uppercase;font-size:10px;letter-spacing:.12em;padding:0 9px 9px}.trade-table td{border-top:1px solid var(--line-soft);padding:11px 9px;color:#c5cad3}.trade-table td:first-child{padding-left:0}.trade-table th:first-child{padding-left:0}.tag{border:1px solid #394354;padding:2px 6px;border-radius:99px;color:#adbbd0;font-size:11px}.gain{color:var(--success)!important}
+  .check-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:23px}.check-head h3{margin:4px 0 0;font-size:19px;font-weight:560;letter-spacing:-.025em}.add{color:var(--accent);font-size:21px;line-height:1}.check-group{margin:0 0 28px}.check-group h4{color:var(--faint);font-size:10px;text-transform:uppercase;letter-spacing:.17em;margin:0 0 10px}.check-item{display:flex;align-items:flex-start;gap:9px;padding:7px 0;color:#cbd0d8;font-size:13px}.check-item input{appearance:none;width:15px;height:15px;margin:2px 0 0;border:1px solid #606977;border-radius:3px;background:transparent;flex:0 0 auto}.check-item input:checked{background:var(--accent);border-color:var(--accent);position:relative}.check-item input:checked:after{content:"✓";position:absolute;color:white;font-size:11px;line-height:13px;left:2px;top:-1px}.check-item input:checked + span{color:#737a85;text-decoration:line-through}.new-task{display:flex;align-items:center;gap:7px;color:var(--faint);font-size:12px;padding:5px 0}.new-task button{color:var(--accent);font-size:18px;padding:0}.progress{border-top:1px solid var(--line);padding-top:20px;margin-top:4px}.progress-row{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-bottom:8px}.bar{height:4px;background:#282d36;border-radius:99px;overflow:hidden}.bar>i{display:block;width:60%;height:100%;background:var(--accent);border-radius:inherit}
+  @media(max-width:800px){body{overflow:auto}.app{border-radius:0;grid-template-columns:220px minmax(0,1fr)}.content{grid-template-columns:1fr}.checklist{display:none}.journal{padding:32px 28px}.brand h1{font-size:17px}.nav-item{font-size:13px}} @media(max-width:600px){.app{grid-template-columns:1fr;height:auto;min-height:100vh}.sidebar{display:none}.topbar{padding:0 18px}.toolbar .tool:not(:last-child){display:none}}
+  #lock{position:fixed;inset:0;z-index:99;background:#0d0f14;display:flex;align-items:center;justify-content:center;padding:20px}
+  #lock[hidden]{display:none}
+  .lock-card{width:320px;text-align:center}
+  .lock-card h1{font-size:22px;margin:8px 0 4px;letter-spacing:-.02em}
+  .lock-card p{color:var(--muted);font-size:13px;margin:0 0 20px}
+  #pin{width:100%;background:#15181e;border:1px solid var(--line);border-radius:8px;color:var(--ink);font-size:22px;letter-spacing:.6em;text-align:center;text-indent:.6em;padding:12px 10px;outline:none}
+  #pin:focus{border-color:var(--accent)}
+  #unlock{width:100%;margin-top:12px;background:var(--accent);color:#fff;font-weight:650;border-radius:8px;padding:11px}
+  #lock-err{color:var(--danger);font-size:12px;min-height:18px;margin:10px 0 0}
+  .shake{animation:shake .3s}
+  @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+</style>
+</head>
+<body>
+<div id="lock"><div class="lock-card"><div class="eyebrow">Personal journal</div><h1>Jr Journey Test #1</h1><p>Enter your PIN to continue.</p><input id="pin" inputmode="numeric" maxlength="4" placeholder="••••" aria-label="PIN"><button id="unlock">Unlock</button><p id="lock-err"></p></div></div>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="eyebrow">Personal journal</div><h1>Jr Journey Test #1</h1><p>Trade with intention.</p></div>
+  <nav class="nav"><button class="nav-item active"><span class="nav-icon">⌂</span>Journal</button><button class="nav-item"><span class="nav-icon">⌕</span>Search</button><button class="nav-item"><span class="nav-icon">◌</span>Templates</button></nav>
+  <div class="section-title"><span>Years</span><button aria-label="Add year">+</button></div>
+  <div class="tree" id="tree">
+    <button class="tree-row selected" data-level="year"><span class="caret">⌄</span><span>2026</span><span class="badge">active</span></button>
+    <div class="child year-2026"><button class="tree-row" data-level="month"><span class="caret">⌄</span><span>September</span></button>
+      <div class="grandchild month-september"><button class="tree-row day" data-date="Thursday, September 17"><span class="caret">•</span><span>Thu 17</span><span class="badge">today</span></button><button class="tree-row day" data-date="Friday, September 18"><span class="caret">•</span><span>Fri 18</span></button><button class="tree-row day" data-date="Monday, September 21"><span class="caret">•</span><span>Mon 21</span></button></div>
+    </div>
+    <button class="tree-row" data-level="year"><span class="caret">›</span><span>2025</span></button>
+  </div>
+  <div class="side-footer"><span>⌘</span><span>Autosaved locally</span></div>
+</aside>
+<main class="main">
+  <header class="topbar"><div class="crumbs"><span>2026</span><span>›</span><span>September</span><span>›</span><strong id="crumb-date">Thu 17</strong></div><div class="toolbar"><button class="tool" id="today">Today</button><button class="tool" id="export">Export note</button></div></header>
+  <div class="content">
+    <section class="journal">
+      <div class="date-line" id="date-line">Thursday · September 17, 2026</div><h2 id="page-title">The trade journal</h2><p class="subtitle">Capture the decision, not just the outcome.</p>
+      <div class="trade-summary"><div class="metric"><label>Market</label><strong contenteditable="true" class="editable">NASDAQ · NQ</strong></div><div class="metric"><label>Day result</label><strong contenteditable="true" class="editable profit">+$0.00</strong></div><div class="metric"><label>Execution</label><strong contenteditable="true" class="editable">Draft</strong></div></div>
+      <div class="field"><div class="field-label">Pre-market thesis</div><div id="thesis" class="editable thesis empty" contenteditable="true" data-placeholder="What is the market inviting you to do today?"></div></div>
+      <div class="field"><div class="field-label">Trade log</div><table class="trade-table"><thead><tr><th>Time</th><th>Instrument</th><th>Setup</th><th>Notes</th><th>P/L</th></tr></thead><tbody id="trades"><tr><td contenteditable="true">09:45</td><td contenteditable="true">NQ</td><td><span class="tag" contenteditable="true">Opening range</span></td><td contenteditable="true">Waited for confirmation.</td><td class="gain" contenteditable="true">—</td></tr></tbody></table><button class="new-task" id="add-trade"><span>＋</span> Add trade</button></div>
+      <div class="divider"></div><div class="field"><div class="field-label">Review</div><div id="review" class="editable empty" contenteditable="true" data-placeholder="What did you see clearly? What will you carry forward?"></div></div>
+    </section>
+    <aside class="checklist"><div class="check-head"><div><div class="eyebrow">Day page</div><h3>Checklists</h3></div><button class="add" id="add-check" aria-label="Add checklist task">＋</button></div>
+      <div class="check-group"><h4>Before the open</h4><label class="check-item"><input type="checkbox" checked><span>Mark higher-timeframe levels</span></label><label class="check-item"><input type="checkbox"><span>Review economic calendar</span></label><label class="check-item"><input type="checkbox"><span>Write the A+ setup</span></label></div>
+      <div class="check-group"><h4>During session</h4><label class="check-item"><input type="checkbox"><span>Risk is defined before entry</span></label><label class="check-item"><input type="checkbox"><span>Screenshot each execution</span></label><label class="check-item"><input type="checkbox"><span>Stop after rule break</span></label></div>
+      <div class="check-group" id="custom-group"><h4>Personal</h4><label class="check-item"><input type="checkbox"><span>Step away after the close</span></label></div>
+      <div class="progress"><div class="progress-row"><span>Daily focus</span><span id="progress-text">1 / 6</span></div><div class="bar"><i id="progress-bar"></i></div></div>
+    </aside>
+  </div>
+</main>
+</div>
+<script>
+const JR_PIN='2199';
+(function(){
+  const lock=document.getElementById('lock'), pin=document.getElementById('pin'),
+        btn=document.getElementById('unlock'), err=document.getElementById('lock-err');
+  if(sessionStorage.getItem('jr-unlocked')==='1'){lock.hidden=true;return;}
+  function fail(){err.textContent='Wrong PIN — try again.';pin.value='';pin.focus();
+    lock.classList.remove('shake');void lock.offsetWidth;lock.classList.add('shake');}
+  function go(){if(pin.value===JR_PIN){sessionStorage.setItem('jr-unlocked','1');lock.hidden=true;}else{fail();}}
+  btn.onclick=go; pin.onkeydown=e=>{if(e.key==='Enter')go();};
+  setTimeout(()=>pin.focus(),50);
+})();
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+function save(){localStorage.setItem('jr-journey-v1',document.body.innerHTML)}
+function restore(){const saved=localStorage.getItem('jr-journey-v1'); if(saved){document.body.innerHTML=saved; bind()}}
+function progress(){const c=$$('.check-item input'); const n=c.filter(x=>x.checked).length; $('#progress-text').textContent=`${n} / ${c.length}`; $('#progress-bar').style.width=`${c.length?n/c.length*100:0}%`;}
+function bind(){
+  $$('.tree-row[data-level]').forEach(b=>b.onclick=()=>{const level=b.dataset.level, label=b.querySelector('span:nth-child(2)').textContent, next=b.nextElementSibling; if(next&&next.tagName==='DIV'){next.hidden=!next.hidden;b.querySelector('.caret').textContent=next.hidden?'›':'⌄'} if(level==='year'||level==='month'){$$('.tree-row').forEach(x=>x.classList.remove('selected'));b.classList.add('selected')}});
+  $$('.day').forEach(d=>d.onclick=()=>{ $$('.day').forEach(x=>x.classList.remove('selected'));d.classList.add('selected');$('#crumb-date').textContent=d.querySelector('span:nth-child(2)').textContent; $('#date-line').textContent=d.dataset.date+' · 2026'; $('#page-title').textContent='The trade journal'; });
+  $$('.check-item input').forEach(x=>x.onchange=()=>{progress();save()});
+  $$('.editable,[contenteditable="true"]').forEach(x=>x.oninput=()=>{x.classList.toggle('empty',!x.textContent.trim());save()});
+  $('#add-check').onclick=()=>{const l=document.createElement('label');l.className='check-item';l.innerHTML='<input type="checkbox"><span contenteditable="true">New checklist item</span>';$('#custom-group').append(l);l.querySelector('input').onchange=()=>{progress();save()};progress()};
+  $('#add-trade').onclick=()=>{const row=document.createElement('tr');row.innerHTML='<td contenteditable="true">—</td><td contenteditable="true">—</td><td><span class="tag" contenteditable="true">Setup</span></td><td contenteditable="true">—</td><td class="gain" contenteditable="true">—</td>';$('#trades').append(row);save()};
+  $('#today').onclick=()=>{$('.day').click()}; $('#export').onclick=()=>{const text=`Jr Journey Test #1\n${$('#date-line').textContent}\n\nPRE-MARKET THESIS\n${$('#thesis').innerText}\n\nREVIEW\n${$('#review').innerText}`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/plain'}));a.download='jr-journey-note.txt';a.click()}; progress();
+}
+bind();
+</script>
+</body></html>
