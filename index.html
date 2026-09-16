@@ -31,6 +31,16 @@
   #lock-err{color:var(--danger);font-size:12px;min-height:18px;margin:10px 0 0}
   .shake{animation:shake .3s}
   @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .chart-cell{min-width:96px}
+  .chart-upload{display:inline-flex;align-items:center;gap:6px;color:var(--faint);font-size:12px;border:1px dashed #394354;border-radius:6px;padding:6px 9px;cursor:pointer;white-space:nowrap}
+  .chart-upload:hover{color:var(--accent);border-color:var(--accent)}
+  .chart-thumb{width:76px;height:50px;object-fit:cover;border-radius:6px;border:1px solid var(--line);cursor:zoom-in;display:block}
+  #viewer{position:fixed;inset:0;z-index:120;background:rgba(4,6,10,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;cursor:zoom-out}
+  #viewer[hidden]{display:none}
+  #viewer img{max-width:92vw;max-height:86vh;border-radius:10px;border:1px solid var(--line)}
+  #viewer-x{position:fixed;top:14px;right:22px;font-size:32px;line-height:1;color:#cbd0d8;cursor:pointer}
+  #viewer-x:hover{color:#fff}
+  #viewer-remove{border:1px solid var(--line);background:#15181e;border-radius:6px;padding:7px 12px;color:#e48181;font-size:12px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -56,7 +66,7 @@
       <div class="date-line" id="date-line">Thursday · September 17, 2026</div><h2 id="page-title">The trade journal</h2><p class="subtitle">Capture the decision, not just the outcome.</p>
       <div class="trade-summary"><div class="metric"><label>Market</label><strong contenteditable="true" class="editable">NASDAQ · NQ</strong></div><div class="metric"><label>Day result</label><strong contenteditable="true" class="editable profit">+$0.00</strong></div><div class="metric"><label>Execution</label><strong contenteditable="true" class="editable">Draft</strong></div></div>
       <div class="field"><div class="field-label">Pre-market thesis</div><div id="thesis" class="editable thesis empty" contenteditable="true" data-placeholder="What is the market inviting you to do today?"></div></div>
-      <div class="field"><div class="field-label">Trade log</div><table class="trade-table"><thead><tr><th>Time</th><th>Instrument</th><th>Setup</th><th>Notes</th><th>P/L</th></tr></thead><tbody id="trades"><tr><td contenteditable="true">09:45</td><td contenteditable="true">NQ</td><td><span class="tag" contenteditable="true">Opening range</span></td><td contenteditable="true">Waited for confirmation.</td><td class="gain" contenteditable="true">—</td></tr></tbody></table><button class="new-task" id="add-trade"><span>＋</span> Add trade</button></div>
+      <div class="field"><div class="field-label">Trade log</div><table class="trade-table"><thead><tr><th>Time</th><th>Instrument</th><th>Setup</th><th>Notes</th><th>P/L</th><th>Chart</th></tr></thead><tbody id="trades"><tr><td contenteditable="true">09:45</td><td contenteditable="true">NQ</td><td><span class="tag" contenteditable="true">Opening range</span></td><td contenteditable="true">Waited for confirmation.</td><td class="gain" contenteditable="true">—</td><td class="chart-cell"><label class="chart-upload">＋ Chart<input type="file" accept="image/*" hidden></label></td></tr></tbody></table><button class="new-task" id="add-trade"><span>＋</span> Add trade</button></div>
       <div class="divider"></div><div class="field"><div class="field-label">Review</div><div id="review" class="editable empty" contenteditable="true" data-placeholder="What did you see clearly? What will you carry forward?"></div></div>
     </section>
     <aside class="checklist"><div class="check-head"><div><div class="eyebrow">Day page</div><h3>Checklists</h3></div><button class="add" id="add-check" aria-label="Add checklist task">＋</button></div>
@@ -68,18 +78,22 @@
   </div>
 </main>
 </div>
+<div id="viewer" hidden><span id="viewer-x" role="button" aria-label="Close">×</span><img alt="Trade chart"><button id="viewer-remove">Remove chart</button></div>
 <script>
 const JR_PIN='2199';
-(function(){
-  const lock=document.getElementById('lock'), pin=document.getElementById('pin'),
-        btn=document.getElementById('unlock'), err=document.getElementById('lock-err');
+function initLock(){
+  const lock=document.getElementById('lock'); if(!lock)return;
+  const pin=document.getElementById('pin'), btn=document.getElementById('unlock'), err=document.getElementById('lock-err');
   if(sessionStorage.getItem('jr-unlocked')==='1'){lock.hidden=true;return;}
+  lock.hidden=false; pin.value=''; err.textContent='';
   function fail(){err.textContent='Wrong PIN — try again.';pin.value='';pin.focus();
     lock.classList.remove('shake');void lock.offsetWidth;lock.classList.add('shake');}
   function go(){if(pin.value===JR_PIN){sessionStorage.setItem('jr-unlocked','1');lock.hidden=true;}else{fail();}}
   btn.onclick=go; pin.onkeydown=e=>{if(e.key==='Enter')go();};
-  setTimeout(()=>pin.focus(),50);
-})();
+  setTimeout(()=>{if(!lock.hidden)pin.focus();},50);
+}
+function fileToThumb(file,cb){const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const s=Math.min(1,1000/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*s));c.height=Math.max(1,Math.round(img.height*s));c.getContext('2d').drawImage(img,0,0,c.width,c.height);try{cb(c.toDataURL('image/jpeg',.78));}catch(e){cb(null);}};img.onerror=()=>cb(null);img.src=r.result;};r.readAsDataURL(file);}
+function chartCellHTML(){return '<label class="chart-upload">＋ Chart<input type="file" accept="image/*" hidden></label>';}
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 function save(){localStorage.setItem('jr-journey-v1',document.body.innerHTML)}
 function restore(){const saved=localStorage.getItem('jr-journey-v1'); if(saved){document.body.innerHTML=saved; bind()}}
@@ -90,9 +104,18 @@ function bind(){
   $$('.check-item input').forEach(x=>x.onchange=()=>{progress();save()});
   $$('.editable,[contenteditable="true"]').forEach(x=>x.oninput=()=>{x.classList.toggle('empty',!x.textContent.trim());save()});
   $('#add-check').onclick=()=>{const l=document.createElement('label');l.className='check-item';l.innerHTML='<input type="checkbox"><span contenteditable="true">New checklist item</span>';$('#custom-group').append(l);l.querySelector('input').onchange=()=>{progress();save()};progress()};
-  $('#add-trade').onclick=()=>{const row=document.createElement('tr');row.innerHTML='<td contenteditable="true">—</td><td contenteditable="true">—</td><td><span class="tag" contenteditable="true">Setup</span></td><td contenteditable="true">—</td><td class="gain" contenteditable="true">—</td>';$('#trades').append(row);save()};
-  $('#today').onclick=()=>{$('.day').click()}; $('#export').onclick=()=>{const text=`Jr Journey Test #1\n${$('#date-line').textContent}\n\nPRE-MARKET THESIS\n${$('#thesis').innerText}\n\nREVIEW\n${$('#review').innerText}`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/plain'}));a.download='jr-journey-note.txt';a.click()}; progress();
+  $('#add-trade').onclick=()=>{const row=document.createElement('tr');row.innerHTML='<td contenteditable="true">—</td><td contenteditable="true">—</td><td><span class="tag" contenteditable="true">Setup</span></td><td contenteditable="true">—</td><td class="gain" contenteditable="true">—</td><td class="chart-cell">'+chartCellHTML()+'</td>';$('#trades').append(row);save()};
+  $('#today').onclick=()=>{$('.day').click()}; $('#export').onclick=()=>{const text=`Jr Journey Test #1\n${$('#date-line').textContent}\n\nPRE-MARKET THESIS\n${$('#thesis').innerText}\n\nREVIEW\n${$('#review').innerText}`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/plain'}));a.download='jr-journey-note.txt';a.click()};
+  const tb=document.getElementById('trades');
+  if(tb){
+    tb.onchange=e=>{const t=e.target;const inp=t&&t.closest?t.closest('input[type=file]'):null;if(!inp||!inp.files||!inp.files[0])return;const cell=inp.closest('.chart-cell');fileToThumb(inp.files[0],url=>{if(!url||!cell.isConnected)return;cell.innerHTML='';const im=document.createElement('img');im.className='chart-thumb';im.src=url;im.alt='Trade chart';cell.appendChild(im);save();});};
+    tb.onclick=e=>{const t=e.target;const im=t&&t.closest?t.closest('.chart-thumb'):null;if(im){const v=document.getElementById('viewer');if(v){v.querySelector('img').src=im.src;window._thumb=im;v.hidden=false;}}};
+    tb.ondblclick=tb.onclick;
+  }
+  const viewer=document.getElementById('viewer');
+  if(viewer){viewer.onclick=e=>{if(e.target&&e.target.id==='viewer-remove'){const t=window._thumb;if(t&&t.isConnected){const cell=t.closest('.chart-cell');cell.innerHTML=chartCellHTML();save();}window._thumb=null;}viewer.hidden=true;};}
+  initLock(); progress();
 }
-bind();
+if(localStorage.getItem('jr-journey-v1')){restore();}else{bind();}
 </script>
 </body></html>
